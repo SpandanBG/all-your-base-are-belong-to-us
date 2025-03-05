@@ -9,9 +9,20 @@ const utils = @import("utils.zig");
 const std_in = std.io.getStdIn();
 const input_delimiters = [_]u8{'\n'};
 
+const exit_cmd = "exit";
+
 pub fn repl() !void {
-    const input = try utils.read_in(std_in, input_delimiters[0..]);
+    var input = std.ArrayList(u8).init(std.heap.page_allocator);
     defer input.deinit();
 
-    std.debug.print("{s}\n", .{input.items[0..]});
+    while (true) {
+        try utils.read_in(std_in, &input, input_delimiters[0..]);
+
+        if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
+            std.debug.print("bye 👋\n", .{});
+            break;
+        }
+
+        input.clearRetainingCapacity();
+    }
 }
