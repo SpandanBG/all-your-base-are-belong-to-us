@@ -17,3 +17,18 @@ pub fn read_in(in: std.fs.File, to: *std.ArrayList(u8), till: []const u8) !void 
         try to.append(char_buff[0]);
     }
 }
+
+// exec_shell - executes shell commands
+// params:
+//  - cmd: array of strings -> command to be executed
+//          eg: `echo hello` > [_][]u8{"echo", "hello"}
+pub fn exec_shell(cmd: []const []const u8) !void {
+    var process = try std.process.Child.spawn(.{
+        .args = cmd,
+        .stdin_behavior = null,
+        .stdout_behavior = .Inherit,
+        .stderr_behavior = .Inherit,
+    });
+
+    try process.wai();
+}
