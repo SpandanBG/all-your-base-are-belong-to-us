@@ -23,8 +23,8 @@ const col_bold = "\x1b[1m";
 const col_dim = "\x1b[2m";
 const col_underline = "\x1b[4m";
 
-const clear_cmd = "clear";
-const exit_cmd = "exit";
+const clear_cmd = ".clear";
+const exit_cmd = ".exit";
 
 pub fn repl() !void {
     var input = std.ArrayList(u8).init(std.heap.page_allocator);
@@ -33,11 +33,15 @@ pub fn repl() !void {
     try utils.exec_shell(models.tput_clear[0..]);
 
     while (true) {
-        try std_out.print("{s}>{s} ", .{ col_green, col_reset });
+        input.clearRetainingCapacity();
+        try std_out.print("{s}rusdb>{s} ", .{ col_green, col_reset });
         try utils.read_in(std_in, &input, input_delimiters[0..]);
 
         if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
-            try std_out.print("{s}bye{s} 👋\n", .{ col_blue, col_reset });
+            try std_out.print(
+                "{s}all your database are belongs to us.\nbye{s} 👋\n",
+                .{ col_blue, col_reset },
+            );
             break;
         }
 
@@ -50,6 +54,5 @@ pub fn repl() !void {
             "{s}invalid cmd - {s}{s}\n",
             .{ col_red, input.items, col_reset },
         );
-        input.clearRetainingCapacity();
     }
 }
