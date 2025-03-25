@@ -11,6 +11,7 @@ const std_in = std.io.getStdIn();
 const std_out = std.io.getStdOut().writer();
 const input_delimiters = [_]u8{'\n'};
 
+const clear_cmd = "clear";
 const exit_cmd = "exit";
 
 pub fn repl() !void {
@@ -26,6 +27,11 @@ pub fn repl() !void {
         if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
             try std_out.print("bye 👋\n", .{});
             break;
+        }
+
+        if (std.mem.eql(u8, clear_cmd, input.items[0..])) {
+            try utils.exec_shell(models.tput_clear[0..]);
+            continue;
         }
 
         input.clearRetainingCapacity();
