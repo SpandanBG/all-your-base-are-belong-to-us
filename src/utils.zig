@@ -23,7 +23,11 @@ pub fn read_in(in: std.fs.File, to: *std.ArrayList(u8), till: []const u8) !void 
 //  - cmd: array of strings -> command to be executed
 //          eg: `echo hello` > [_][]u8{"echo", "hello"}
 pub fn exec_shell(cmd: []const []const u8) !void {
-    if (cmd.len == 0) return;
+    if (cmd.len == 0) {
+        @branchHint(.unlikely);
+        return;
+    }
+
     var process = std.process.Child.init(cmd, std.heap.page_allocator);
     try process.spawn();
     _ = try process.wait();
