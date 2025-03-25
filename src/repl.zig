@@ -38,7 +38,7 @@ pub fn repl() !void {
         try utils.read_in(std_in, &input, input_delimiters[0..]);
 
         if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
-            @branchHint(.unlikely);
+            @branchHint(.cold);
             try std_out.print(
                 "{s}all your database are belongs to us.\nbye{s} 👋\n",
                 .{ col_blue, col_reset },
@@ -47,6 +47,7 @@ pub fn repl() !void {
         }
 
         if (std.mem.eql(u8, clear_cmd, input.items[0..])) {
+            @branchHint(.cold);
             try utils.exec_shell(models.tput_clear[0..]);
             continue;
         }
