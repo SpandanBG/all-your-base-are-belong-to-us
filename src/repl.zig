@@ -6,6 +6,7 @@
 const std = @import("std");
 const utils = @import("utils.zig");
 const c = @import("constants.zig");
+const sql_processor = @import("sql/processor.zig");
 
 const input_delimiters = [_]u8{'\n'};
 
@@ -23,21 +24,42 @@ pub fn repl() !void {
         try c.std_out.print("{s}rusdb>{s} ", .{ c.col_green, c.col_reset });
         try utils.read_in(c.std_in, &input, input_delimiters[0..]);
 
-        if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
+        if (input.items.len > 0 and input.items[0] == '.') {
             @branchHint(.cold);
-            try c.std_out.print("{s}bye{s} 👋\n", .{ c.col_blue, c.col_reset });
-            break;
-        }
 
-        if (std.mem.eql(u8, clear_cmd, input.items[0..])) {
-            @branchHint(.cold);
-            try utils.exec_shell(c.tput_clear[0..]);
+            if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
+                @branchHint(.cold);
+                try c.std_out.print("{s}bye{s} 👋\n", .{ c.col_blue, c.col_reset });
+                break;
+            }
+
+            if (std.mem.eql(u8, clear_cmd, input.items[0..])) {
+                @branchHint(.cold);
+                try utils.exec_shell(c.tput_clear[0..]);
+                continue;
+            }
+
+            show_cmd_error(input.items);
             continue;
         }
 
-        try c.std_err.print(
-            "{s}invalid cmd - {s}{s}\n",
-            .{ c.col_red, input.items, c.col_reset },
-        );
+        sql_processor.generate_bytecode(input.items) catch |err| {
+            show_sql_error(err);
+            continue;
+        };
     }
+}
+
+fn show_cmd_error(cmd: []const u8) void {
+    c.std_err.print(
+        "{s}invalid cmd - {s}{s}\n",
+        .{ c.col_red, cmd, c.col_reset },
+    ) catch return;
+}
+
+fn show_sql_error(err: sql_processor.processor_err) void {
+    c.std_err.print(
+        "{s}sql error - {s}{s}\n",
+        .{ c.col_red, sql_processor.get_err_msg(err), c.col_reset },
+    ) catch return;
 }
