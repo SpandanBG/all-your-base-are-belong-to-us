@@ -30,7 +30,7 @@ pub fn repl() !void {
         if (input.items.len > 0 and input.items[0] == '.') {
             @branchHint(.cold);
 
-            if (std.mem.eql(u8, exit_cmd, input.items[0..])) {
+            if (std.mem.eql(u8, exit_cmd, input.items)) {
                 @branchHint(.cold);
                 try c.std_out.print("{s}bye{s} 👋\n", .{ c.col_blue, c.col_reset });
                 break;
