@@ -32,3 +32,29 @@ pub fn exec_shell(cmd: []const []const u8) !void {
     try process.spawn();
     _ = try process.wait();
 }
+
+// ---------------------- TEST ----------------------
+
+test "read_in should read from input source and add to ArrayList<u8>" {
+    const allocator = std.testing.allocator;
+
+    const testData = "Hello\n";
+    const testDelimiter = "\n";
+
+    const cwd = std.fs.cwd();
+
+    const file = try cwd.createFile("temp.txt", .{ .read = true });
+    defer file.close();
+    defer cwd.deleteFile("temp.txt") catch {};
+
+    try file.chmod(0o666);
+    _ = try file.write(testData);
+    try file.seekTo(0);
+
+    var bufferList = std.ArrayList(u8).init(allocator);
+    defer bufferList.deinit();
+
+    try read_in(file, &bufferList, testDelimiter);
+
+    try std.testing.expectEqualStrings("Hello", bufferList.items);
+}
