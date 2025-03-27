@@ -46,8 +46,8 @@ pub fn repl() !void {
             continue;
         }
 
-        sql_processor.generate_bytecode(input.items) catch |err| {
-            show_sql_error(err);
+        _ = sql_processor.generate_bytecode(input.items) catch |err| {
+            show_sql_error(err, input.items);
             continue;
         };
 
@@ -65,10 +65,16 @@ fn show_cmd_error(cmd: []const u8) void {
     ) catch return;
 }
 
-fn show_sql_error(err: sql_processor.processor_err) void {
+fn show_sql_error(err: sql_processor.processor_err, query: []const u8) void {
     c.std_err.print(
-        "{s}sql error - {s}{s}\n",
-        .{ c.col_red, sql_processor.get_err_msg(err), c.col_reset },
+        "{s}sql query - {s}\n\t{s}error: {s}{s}\n",
+        .{
+            c.col_red,
+            query,
+            c.col_bold,
+            sql_processor.get_err_msg(err),
+            c.col_reset,
+        },
     ) catch return;
 }
 
