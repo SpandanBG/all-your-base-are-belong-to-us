@@ -36,7 +36,7 @@ pub fn repl() !void {
                 break;
             }
 
-            if (std.mem.eql(u8, clear_cmd, input.items[0..])) {
+            if (std.mem.eql(u8, clear_cmd, input.items)) {
                 @branchHint(.cold);
                 try utils.exec_shell(c.tput_clear[0..]);
                 continue;
