@@ -24,6 +24,8 @@ pub fn repl() !void {
         try c.std_out.print("{s}rusdb>{s} ", .{ c.col_green, c.col_reset });
         try utils.read_in(c.std_in, &input, input_delimiters[0..]);
 
+        if (input.items.len == 0) continue;
+
         if (input.items.len > 0 and input.items[0] == '.') {
             @branchHint(.cold);
 
