@@ -7,6 +7,7 @@ const std = @import("std");
 const utils = @import("utils.zig");
 const c = @import("constants.zig");
 const sql_processor = @import("sql/processor.zig");
+const query_executor = @import("core/executor.zig");
 
 const input_delimiters = [_]u8{'\n'};
 
@@ -49,6 +50,11 @@ pub fn repl() !void {
             show_sql_error(err);
             continue;
         };
+
+        query_executor.execute() catch |err| {
+            show_execution_error(err);
+            continue;
+        };
     }
 }
 
@@ -63,5 +69,12 @@ fn show_sql_error(err: sql_processor.processor_err) void {
     c.std_err.print(
         "{s}sql error - {s}{s}\n",
         .{ c.col_red, sql_processor.get_err_msg(err), c.col_reset },
+    ) catch return;
+}
+
+fn show_execution_error(err: query_executor.execution_err) void {
+    c.std_err.print(
+        "{s}execution error - {s}{s}\n",
+        .{ c.col_red, query_executor.get_execution_err_msg(err), c.col_reset },
     ) catch return;
 }
