@@ -1,8 +1,15 @@
 const std = @import("std");
+const c = @import("../constants.zig");
+const sql_query = @import("../sql/processor.zig");
 
 pub const execution_err = error{DEFAULT_ERR};
 
-pub fn execute() execution_err!void {
+pub fn execute(query: sql_query.bytecode) execution_err!void {
+    switch (query.type) {
+        .INSERT => c.std_out.print("yep let's insert\n", .{}) catch {},
+        .SELECT => c.std_out.print("yep let's select\n", .{}) catch {},
+    }
+
     return execution_err.DEFAULT_ERR;
 }
 

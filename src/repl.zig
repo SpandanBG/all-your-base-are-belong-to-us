@@ -46,12 +46,12 @@ pub fn repl() !void {
             continue;
         }
 
-        _ = sql_processor.generate_bytecode(input.items) catch |err| {
+        const query = sql_processor.generate_bytecode(input.items) catch |err| {
             show_sql_error(err, input.items);
             continue;
         };
 
-        query_executor.execute() catch |err| {
+        query_executor.execute(query) catch |err| {
             show_execution_error(err);
             continue;
         };
