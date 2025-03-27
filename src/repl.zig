@@ -7,6 +7,7 @@ const std = @import("std");
 const utils = @import("utils.zig");
 const c = @import("constants.zig");
 const sql_processor = @import("sql/processor.zig");
+const sql_c = @import("sql/constants.zig");
 const query_executor = @import("core/executor.zig");
 
 const input_delimiters = [_]u8{'\n'};
@@ -65,7 +66,7 @@ fn show_cmd_error(cmd: []const u8) void {
     ) catch return;
 }
 
-fn show_sql_error(err: sql_processor.processor_err, query: []const u8) void {
+fn show_sql_error(err: sql_c.processor_err, query: []const u8) void {
     c.std_err.print(
         "{s}sql query - {s}\n\t{s}error: {s}{s}\n",
         .{
