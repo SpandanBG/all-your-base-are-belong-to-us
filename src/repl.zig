@@ -89,3 +89,6 @@ fn show_execution_error(err: query_executor.execution_err) void {
 // ---------------------- TEST ----------------------
 //
 // TODO: This needs integration testing and cannot be unit tested.
+//
+// To achive that, we have to using POSIX to redirect std in out to another pipe
+// that our integration testing will use.
