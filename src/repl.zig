@@ -85,3 +85,7 @@ fn show_execution_error(err: query_executor.execution_err) void {
         .{ c.col_red, query_executor.get_execution_err_msg(err), c.col_reset },
     ) catch return;
 }
+
+// ---------------------- TEST ----------------------
+//
+// TODO: This needs integration testing and cannot be unit tested.
