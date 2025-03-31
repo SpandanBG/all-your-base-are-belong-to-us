@@ -58,3 +58,24 @@ test "read_in should read from input source and add to ArrayList<u8>" {
 
     try std.testing.expectEqualStrings("Hello", bufferList.items);
 }
+
+test "exec_shell executes command successfully" {
+    try exec_shell(&[_][]const u8{"true"});
+
+    try std.testing.expect(true);
+}
+
+test "exec_shell executes command with error" {
+    exec_shell(&[_][]const u8{"noexec"}) catch {
+        try std.testing.expect(true);
+        return;
+    };
+
+    try std.testing.expect(true == false);
+}
+
+test "exec_shell excutes no command without any error" {
+    try exec_shell(&[_][]const u8{});
+
+    try std.testing.expect(true);
+}
